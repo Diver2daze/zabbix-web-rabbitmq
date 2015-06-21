@@ -9,13 +9,16 @@ from pyzabbix import ZabbixAPI
 
 
 if __name__ == "__main__":
-    zapi = ZabbixAPI("http://ni2.codeabovelab.com:8080/zabbix")
-    zapi.login("admin", "zabbix")
+	zabbix_url="http://localhost/zabbix"
+	zabbix_user="admin"
+	zabbix_pass="zabbix"
+	rabbit_url='amqp://admin:opentsp@ni1.codeabovelab.com:5672/%2F'
+
+    zapi = ZabbixAPI(zabbix_url)
+    zapi.login(zabbix_user, zabbix_pass)
     print "Connected to Zabbix API Version %s" % zapi.api_version()
 
-
-
-    rabbit_connection = pika.BlockingConnection(pika.URLParameters('amqp://admin:opentsp@ni1.codeabovelab.com:5672/%2F'))
+    rabbit_connection = pika.BlockingConnection(pika.URLParameters(zabbix_url))
     print "Connected to rabbit %s"% rabbit_connection.server_properties
     channel = rabbit_connection.channel()
     channel.exchange_declare(exchange='opentsp.log', type='fanout')
